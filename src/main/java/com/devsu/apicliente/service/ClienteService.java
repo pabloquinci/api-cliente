@@ -1,5 +1,6 @@
 package com.devsu.apicliente.service;
 
+import com.devsu.apicliente.configuration.CacheConfig;
 import com.devsu.apicliente.dto.*;
 import com.devsu.apicliente.exception.UserAlreadyFollowedException;
 import com.devsu.apicliente.exception.UserNotFoundExcdeption;
@@ -7,6 +8,7 @@ import com.devsu.apicliente.model.Cliente;
 import com.devsu.apicliente.repository.ClienteRepository;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -28,13 +30,13 @@ public class ClienteService {
                 .estado("OK")
                 .build();
 
-        clienteDAO.setDni(clienteRegistroDTO.getDni());
-        clienteDAO.setDni(clienteRegistroDTO.getDni());
-        clienteDAO.setNombre(clienteRegistroDTO.getNombre());
-        clienteDAO.setDireccion(clienteRegistroDTO.getDireccion());
-        clienteDAO.setTelefono(clienteRegistroDTO.getTelefono());
-        clienteDAO.setGenero(clienteRegistroDTO.getGenero());
-        clienteDAO.setEdad(clienteRegistroDTO.getEdad());
+        clienteDAO.setContrasenia(!Strings.isEmpty(clienteDAO.getContrasenia()) ? clienteDAO.getContrasenia() :null);
+        clienteDAO.setDni(!Objects.isNull(clienteDAO.getDni()) ?clienteDAO.getDni() :null);
+        clienteDAO.setNombre(!Strings.isEmpty(clienteDAO.getNombre()) ?clienteDAO.getNombre() :null);
+        clienteDAO.setDireccion(!Strings.isEmpty(clienteDAO.getDireccion()) ?clienteDAO.getDireccion() :null);
+        clienteDAO.setTelefono(!Objects.isNull(clienteDAO.getTelefono()) ?clienteDAO.getTelefono() :null);
+        clienteDAO.setGenero(!Strings.isEmpty(clienteDAO.getGenero()) ?clienteDAO.getGenero() :null);
+        clienteDAO.setEdad(!Objects.isNull(clienteDAO.getEdad()) ?clienteDAO.getEdad() :null);
         this.clienteRepository.save(clienteDAO);
 
         return Optional.of(ClienteRegistroResponseDTO.builder().status("OK").build());
@@ -45,23 +47,23 @@ public class ClienteService {
         Cliente clienteUpdate=this.clienteRepository.findById(clienteEdicionDTO.getIdPersona())
                 .orElseThrow(()-> new UserNotFoundExcdeption());
 
-        clienteUpdate.setContrasenia(Strings.isEmpty(clienteEdicionDTO.getContrasenia()) ? clienteEdicionDTO.getContrasenia() :null);
+        clienteUpdate.setContrasenia(!Strings.isEmpty(clienteEdicionDTO.getContrasenia()) ? clienteEdicionDTO.getContrasenia() :null);
         clienteUpdate.setDni(!Objects.isNull(clienteEdicionDTO.getDni()) ?clienteEdicionDTO.getDni() :null);
-        clienteUpdate.setNombre(!Objects.isNull(clienteEdicionDTO.getNombre()) ?clienteEdicionDTO.getNombre() :null );
-        clienteUpdate.setDireccion(!Objects.isNull(clienteEdicionDTO.getDireccion()) ?clienteEdicionDTO.getDireccion() :null );
+        clienteUpdate.setNombre(!Strings.isEmpty(clienteEdicionDTO.getNombre()) ?clienteEdicionDTO.getNombre() :null );
+        clienteUpdate.setDireccion(!Strings.isEmpty(clienteEdicionDTO.getDireccion()) ?clienteEdicionDTO.getDireccion() :null );
         clienteUpdate.setTelefono(!Objects.isNull(clienteEdicionDTO.getTelefono()) ?clienteEdicionDTO.getTelefono() :null);
-        clienteUpdate.setGenero(!Objects.isNull(clienteEdicionDTO.getGenero()) ?clienteEdicionDTO.getGenero() :null);
+        clienteUpdate.setGenero(!Strings.isEmpty(clienteEdicionDTO.getGenero()) ?clienteEdicionDTO.getGenero() :null);
         clienteUpdate.setEdad(!Objects.isNull(clienteEdicionDTO.getEdad()) ?clienteEdicionDTO.getEdad() :null);
         this.clienteRepository.save(clienteUpdate);
 
         return Optional.of(ResultadoResponseDTO.builder().resultado("Edicion OK").build());
     }
 
-    public Optional<ResultadoResponseDTO> actualizar(Map<String, String> clienteRegistroDTO, Long id){
+    public Optional<ResultadoResponseDTO> actualizar(Map<String, String> clienteUpdateDTO, Long id){
         Cliente clienteUpdate=this.clienteRepository.findById(id)
                 .orElseThrow(()-> new UserNotFoundExcdeption());
 
-        clienteRegistroDTO.forEach((clave, valor)->{
+        clienteUpdateDTO.forEach((clave, valor)->{
 
             switch(clave){
                 case "nombre" -> clienteUpdate.setNombre((String) valor);
@@ -81,7 +83,7 @@ public class ClienteService {
     }
 
 //    @Cacheable(cacheNames = CacheConfig.USER_CACHE, unless = "#result == null")
-
+@Cacheable(cacheNames = CacheConfig.CLIENTE_CACHE, unless = "#result == null")
     public Optional<ClientesResponseDTO> getClientes(){
         List<Cliente> clientes=this.clienteRepository.findAll();
         ClientesResponseDTO clientesDTO=ClientesResponseDTO.builder().clientes(new ArrayList<>()).build();
