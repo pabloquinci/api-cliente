@@ -2,7 +2,7 @@ package com.devsu.apicliente.service;
 
 import com.devsu.apicliente.configuration.CacheConfig;
 import com.devsu.apicliente.dto.*;
-import com.devsu.apicliente.exception.UserAlreadyFollowedException;
+import com.devsu.apicliente.exception.UserAlreadyExistsException;
 import com.devsu.apicliente.exception.UserNotFoundExcdeption;
 import com.devsu.apicliente.model.Cliente;
 import com.devsu.apicliente.repository.ClienteRepository;
@@ -25,18 +25,24 @@ public class ClienteService {
 
     public Optional<ClienteRegistroResponseDTO> registrar(ClienteRegistroDTO clienteRegistroDTO){
 
+        Optional<Cliente> clienteUpdate=this.clienteRepository.findByDni(clienteRegistroDTO.getDni().intValue());
+
+        if(clienteUpdate.isPresent()){
+            throw new UserAlreadyExistsException();
+        }
+
         Cliente clienteDAO= Cliente.builder()
                 .contrasenia(clienteRegistroDTO.getContrasenia())
                 .estado("OK")
                 .build();
 
-        clienteDAO.setContrasenia(!Strings.isEmpty(clienteDAO.getContrasenia()) ? clienteDAO.getContrasenia() :null);
-        clienteDAO.setDni(!Objects.isNull(clienteDAO.getDni()) ?clienteDAO.getDni() :null);
-        clienteDAO.setNombre(!Strings.isEmpty(clienteDAO.getNombre()) ?clienteDAO.getNombre() :null);
-        clienteDAO.setDireccion(!Strings.isEmpty(clienteDAO.getDireccion()) ?clienteDAO.getDireccion() :null);
-        clienteDAO.setTelefono(!Objects.isNull(clienteDAO.getTelefono()) ?clienteDAO.getTelefono() :null);
-        clienteDAO.setGenero(!Strings.isEmpty(clienteDAO.getGenero()) ?clienteDAO.getGenero() :null);
-        clienteDAO.setEdad(!Objects.isNull(clienteDAO.getEdad()) ?clienteDAO.getEdad() :null);
+        clienteDAO.setContrasenia(!Strings.isEmpty(clienteRegistroDTO.getContrasenia()) ? clienteRegistroDTO.getContrasenia() :null);
+        clienteDAO.setDni(!Objects.isNull(clienteRegistroDTO.getDni()) ?clienteRegistroDTO.getDni() :null);
+        clienteDAO.setNombre(!Strings.isEmpty(clienteRegistroDTO.getNombre()) ?clienteRegistroDTO.getNombre() :null);
+        clienteDAO.setDireccion(!Strings.isEmpty(clienteRegistroDTO.getDireccion()) ?clienteRegistroDTO.getDireccion() :null);
+        clienteDAO.setTelefono(!Objects.isNull(clienteRegistroDTO.getTelefono()) ?clienteRegistroDTO.getTelefono() :null);
+        clienteDAO.setGenero(!Strings.isEmpty(clienteRegistroDTO.getGenero()) ?clienteRegistroDTO.getGenero() :null);
+        clienteDAO.setEdad(!Objects.isNull(clienteRegistroDTO.getEdad()) ?clienteRegistroDTO.getEdad() :null);
         this.clienteRepository.save(clienteDAO);
 
         return Optional.of(ClienteRegistroResponseDTO.builder().status("OK").build());

@@ -12,20 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    // message converter
-    @Bean
-    public MessageConverter converter(){
-        return new Jackson2JsonMessageConverter();
-    }
 
-    // configure RabbitTemplate
-    @Bean
-    public AmqpTemplate amqpTemplate(ConnectionFactory connectionFactory){
-
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(converter());
-        return rabbitTemplate;
-    }
 
     //Configuro la cola donde responde los datos del cliente
 
@@ -41,6 +28,22 @@ public class RabbitMQConfig {
     @Bean
     public Queue orderQueue(){
         return new Queue(clienteQueue);
+    }
+
+
+    // message converter
+    @Bean
+    public MessageConverter converter(){
+        return new Jackson2JsonMessageConverter();
+    }
+
+    // configure RabbitTemplate
+    @Bean
+    public AmqpTemplate amqpTemplate(ConnectionFactory connectionFactory){
+
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        rabbitTemplate.setMessageConverter(converter());
+        return rabbitTemplate;
     }
 
     // spring bean for queue - order queue
@@ -59,6 +62,8 @@ public class RabbitMQConfig {
                 .to(exchange())
                 .with(clienteRoutingKey);
     }
+
+
 
 
 }
