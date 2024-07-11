@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  api-cliente:
+    #container_name: api-cliente
+    build: .
+    #context: ./api-cliente/
+    ports:
+      - 8080:8080
+    environment:
+      - MYSQL_DATABASE=devsu
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=
+      - MYSQL_HOST=mysqldb
+      - MYSQL_PORT=3306
+  redis:
+    image: redis:3.2.5
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - /path/to/local/dаta:/root/redis
+      - /path/to/local/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_PASSWORD=my-password
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=16
+  rabbitmq:
+    image: rabbitmq:3.9-management
+    container_name: rabbitmq-local
+    hostname: rabbitmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbitmq_init.sh:/docker-entrypoint-init.d/rabbitmq_init.sh
+    command: rabbitmq-server
+volumes:
+  rabbitmq_data:
+    driver: local
