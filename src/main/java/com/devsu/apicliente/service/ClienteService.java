@@ -16,9 +16,8 @@ import java.util.*;
 @Service
 public class ClienteService {
 
-    @Autowired
     private final ClienteRepository clienteRepository;
-
+    @Autowired
     public ClienteService(ClienteRepository clienteRepository) {
         this.clienteRepository = clienteRepository;
     }

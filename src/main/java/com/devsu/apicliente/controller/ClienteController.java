@@ -1,6 +1,7 @@
 package com.devsu.apicliente.controller;
 
 import com.devsu.apicliente.dto.*;
+import com.devsu.apicliente.repository.ClienteRepository;
 import com.devsu.apicliente.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -14,9 +15,12 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/clientes")
 public class ClienteController {
-    @Autowired
-    ClienteService clienteService;
 
+    private final ClienteService clienteService;
+    @Autowired
+    public ClienteController(ClienteService clienteService) {
+        this.clienteService = clienteService;
+    }
     @PostMapping("/registrar")
     private ResponseEntity registrar(@RequestBody ClienteRegistroDTO request) {
 
