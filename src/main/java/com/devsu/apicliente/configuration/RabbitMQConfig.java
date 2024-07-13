@@ -26,6 +26,11 @@ public class RabbitMQConfig {
     private String clienteRoutingKey;
 
     @Bean
+    public Queue cliente() {
+        return new Queue("cliente", true); // Cola durable
+    }
+
+    @Bean
     public Queue orderQueue(){
         return new Queue(clienteQueue);
     }
@@ -38,7 +43,7 @@ public class RabbitMQConfig {
     }
 
     // configure RabbitTemplate
-    @Bean
+    @Bean("amqpTemplate")
     public AmqpTemplate amqpTemplate(ConnectionFactory connectionFactory){
 
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
