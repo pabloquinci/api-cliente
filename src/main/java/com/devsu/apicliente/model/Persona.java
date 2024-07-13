@@ -30,7 +30,7 @@ public abstract class Persona implements Serializable {
     @Column
     private String genero;
 
-    public Persona(String nombre, Long dni, String direccion, Long telefono, Integer edad, String genero){
+    protected Persona(String nombre, Long dni, String direccion, Long telefono, Integer edad, String genero){
         this.nombre=nombre;
         this.dni=dni;
         this.direccion=direccion;
