@@ -1,8 +1,6 @@
 package com.devsu.apicliente;
 
-import com.devsu.apicliente.dto.ClienteRegistroResponseDTO;
 import com.devsu.apicliente.dto.ClientesResponseDTO;
-import com.devsu.apicliente.dto.rabbit.ClienteDTO;
 import com.devsu.apicliente.model.Cliente;
 import com.devsu.apicliente.repository.ClienteRepository;
 import com.devsu.apicliente.service.ClienteService;
@@ -12,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -34,19 +31,11 @@ public class ClienteServiceTest {
     @MockBean
     private ClienteRepository clienteRepository;
 
-    Cliente cliente;
+    static Cliente cliente;
 
-    List<Cliente> clientes= new ArrayList<>();
+    static List<Cliente> clientes= new ArrayList<>();
     @BeforeAll
     public static void setUp(){
-
-
-
-    }
-
-    @Test
-    public void whenGetClientsIsOk(){
-
         cliente= Cliente.builder()
                 .estado("OK")
                 .contrasenia("1234")
@@ -57,7 +46,6 @@ public class ClienteServiceTest {
         cliente.setEdad(33);
 
         clientes.add(cliente);
-
 
     }
 

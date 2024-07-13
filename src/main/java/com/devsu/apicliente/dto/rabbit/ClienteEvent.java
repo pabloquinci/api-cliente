@@ -1,6 +1,5 @@
 package com.devsu.apicliente.dto.rabbit;
 
-import com.devsu.apicliente.dto.CuentaDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

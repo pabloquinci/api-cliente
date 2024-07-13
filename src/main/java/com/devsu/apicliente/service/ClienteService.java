@@ -16,6 +16,7 @@ import java.util.*;
 @Service
 public class ClienteService {
 
+    private static final String EDICION_OK="Edicion OK";
     private final ClienteRepository clienteRepository;
     @Autowired
     public ClienteService(ClienteRepository clienteRepository) {
@@ -44,13 +45,13 @@ public class ClienteService {
         clienteDAO.setEdad(!Objects.isNull(clienteRegistroDTO.getEdad()) ?clienteRegistroDTO.getEdad() :null);
         this.clienteRepository.save(clienteDAO);
 
-        return Optional.of(ClienteRegistroResponseDTO.builder().status("OK").build());
+        return Optional.of(ClienteRegistroResponseDTO.builder().status(EDICION_OK).build());
     }
 
     public Optional<ResultadoResponseDTO> editar(ActualizarEditarRequestDTO clienteEdicionDTO){
 
         Cliente clienteUpdate=this.clienteRepository.findById(clienteEdicionDTO.getIdPersona())
-                .orElseThrow(()-> new UserNotFoundExcdeption());
+                .orElseThrow(UserNotFoundExcdeption::new);
 
         clienteUpdate.setContrasenia(!Strings.isEmpty(clienteEdicionDTO.getContrasenia()) ? clienteEdicionDTO.getContrasenia() :null);
         clienteUpdate.setDni(!Objects.isNull(clienteEdicionDTO.getDni()) ?clienteEdicionDTO.getDni() :null);
@@ -61,29 +62,29 @@ public class ClienteService {
         clienteUpdate.setEdad(!Objects.isNull(clienteEdicionDTO.getEdad()) ?clienteEdicionDTO.getEdad() :null);
         this.clienteRepository.save(clienteUpdate);
 
-        return Optional.of(ResultadoResponseDTO.builder().resultado("Edicion OK").build());
+        return Optional.of(ResultadoResponseDTO.builder().resultado(EDICION_OK).build());
     }
 
     public Optional<ResultadoResponseDTO> actualizar(Map<String, String> clienteUpdateDTO, Long id){
         Cliente clienteUpdate=this.clienteRepository.findById(id)
-                .orElseThrow(()-> new UserNotFoundExcdeption());
+                .orElseThrow(UserNotFoundExcdeption::new);
 
         clienteUpdateDTO.forEach((clave, valor)->{
 
             switch(clave){
                 case "nombre" -> clienteUpdate.setNombre((String) valor);
-                case "telefono" -> clienteUpdate.setTelefono(Long.parseLong((String)valor));
-                case "genero" -> clienteUpdate.setGenero((String) valor);
-                case "dni" -> clienteUpdate.setDni(Long.parseLong((String)valor));
-                case "direccion" -> clienteUpdate.setDireccion((String) valor);
-                case "contrasenia" -> clienteUpdate.setContrasenia((String) valor);
+                case "telefono" -> clienteUpdate.setTelefono(Long.parseLong(valor));
+                case "genero" -> clienteUpdate.setGenero( valor);
+                case "dni" -> clienteUpdate.setDni(Long.parseLong(valor));
+                case "direccion" -> clienteUpdate.setDireccion( valor);
+                case "contrasenia" -> clienteUpdate.setContrasenia( valor);
             }
 
         });
 
         this.clienteRepository.save(clienteUpdate);
 
-        return Optional.of(ResultadoResponseDTO.builder().resultado("Edicion OK").build());
+        return Optional.of(ResultadoResponseDTO.builder().resultado(EDICION_OK).build());
 
     }
 
@@ -92,7 +93,7 @@ public class ClienteService {
     public Optional<ClientesResponseDTO> getClientes(){
         List<Cliente> clientes=this.clienteRepository.findAll();
         ClientesResponseDTO clientesDTO=ClientesResponseDTO.builder().clientes(new ArrayList<>()).build();
-        if(clientes.size()!=0){
+        if(!clientes.isEmpty()){
             clientes
                 .stream()
                        .forEach(cliente->{
@@ -113,10 +114,10 @@ public class ClienteService {
 
     public Optional<ResultadoResponseDTO> borrar(Long id){
         Cliente clienteUpdate=this.clienteRepository.findById(id)
-                .orElseThrow(()-> new UserNotFoundExcdeption());
+                .orElseThrow(UserNotFoundExcdeption::new);
         this.clienteRepository.delete(clienteUpdate);
 
-        return Optional.of(ResultadoResponseDTO.builder().resultado("Edicion OK").build());
+        return Optional.of(ResultadoResponseDTO.builder().resultado(EDICION_OK).build());
     }
 
 

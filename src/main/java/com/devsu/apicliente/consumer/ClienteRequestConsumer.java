@@ -22,13 +22,12 @@ public class ClienteRequestConsumer {
     @Value("${rabbitmq.binding.routing.cliente.key}")
     private String orderRoutingKey;
 
-    @Autowired
-    private final ClienteRepository clienteRepository;
+    ClienteRepository clienteRepository;
 
-    public ClienteRequestConsumer(ClienteRepository clienteRepository) {
+    @Autowired
+    public ClienteRequestConsumer(ClienteRepository clienteRepository){
         this.clienteRepository = clienteRepository;
     }
-
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -37,18 +36,14 @@ public class ClienteRequestConsumer {
     @RabbitListener(queues = "${rabbitmq.queue.cuenta.name}")
     public void consume(CuentaEvent event){
         ClienteEvent eventCliente = new ClienteEvent();
+        LOGGER.info(String.format("Order event received => %s", event.toString()));
 
         try{
 
-        LOGGER.info(String.format("Order event received => %s", event.toString()));
-
-        // save order event data in database
-
         Cliente clienteUpdate=this.clienteRepository.findByDni(event.getCuenta().getDni())
-                .orElseThrow(()-> new UserNotFoundExcdeption());
+                .orElseThrow(UserNotFoundExcdeption::new);
 
-        // Envio respuesta del client
-        eventCliente.setStatus("SENDING");
+        eventCliente.setStatus("ENVIANDO");
         eventCliente.setMessage("Enviando info usuario");
         eventCliente.setCliente(ClienteDTO.builder()
                         .nombre(clienteUpdate.getNombre())

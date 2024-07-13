@@ -1,7 +1,6 @@
 package com.devsu.apicliente.dto;
 
 import jakarta.annotation.Nullable;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

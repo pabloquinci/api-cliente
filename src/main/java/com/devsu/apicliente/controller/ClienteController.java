@@ -1,14 +1,11 @@
 package com.devsu.apicliente.controller;
 
 import com.devsu.apicliente.dto.*;
-import com.devsu.apicliente.repository.ClienteRepository;
 import com.devsu.apicliente.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -22,19 +19,19 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
     @PostMapping("/registrar")
-    private ResponseEntity registrar(@RequestBody ClienteRegistroDTO request) {
+    public ResponseEntity<ClienteRegistroResponseDTO> registrar(@RequestBody ClienteRegistroDTO request) {
 
     Optional<ClienteRegistroResponseDTO> response=clienteService.registrar(request);
 
     if (response.isPresent()){
         return ResponseEntity.ok(response.get());
     }
-        return ResponseEntity.internalServerError().body("Error");
+        return ResponseEntity.internalServerError().body(ClienteRegistroResponseDTO.builder().build());
 
     }
 
     @PutMapping("/editar")
-    private ResponseEntity editar(@RequestBody ActualizarEditarRequestDTO request) {
+    public ResponseEntity editar(@RequestBody ActualizarEditarRequestDTO request) {
 
         Optional<ResultadoResponseDTO> response=clienteService.editar(request);
 
@@ -45,7 +42,7 @@ public class ClienteController {
 
     }
     @PatchMapping("/actualizar/{idCliente}")
-    private ResponseEntity<ResultadoResponseDTO>actualizar(@RequestBody Map<String, String> request, @PathVariable("idCliente")  Long idCliente){
+    public ResponseEntity<ResultadoResponseDTO>actualizar(@RequestBody Map<String, String> request, @PathVariable("idCliente")  Long idCliente){
 
         Optional<ResultadoResponseDTO> resultado=clienteService.actualizar(request, idCliente);
         if(resultado.isPresent()){
@@ -55,7 +52,7 @@ public class ClienteController {
     }
 
     @GetMapping("/getClientes")
-    private ResponseEntity<ClientesResponseDTO> getClientes() {
+    public ResponseEntity<ClientesResponseDTO> getClientes() {
         Optional<ClientesResponseDTO> resultado= clienteService.getClientes();
         if(resultado.isPresent()){
             return ResponseEntity.ok(resultado.get());
@@ -64,7 +61,7 @@ public class ClienteController {
     }
 
     @DeleteMapping("/borrar/{clienteId}")
-    private ResponseEntity<ResultadoResponseDTO> getClientes(@PathVariable("clienteId") Long clienteId){
+    public ResponseEntity<ResultadoResponseDTO> getClientes(@PathVariable("clienteId") Long clienteId){
         return ResponseEntity.ok(clienteService.borrar(clienteId).get());
     }
 
